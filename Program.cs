@@ -33,7 +33,10 @@ namespace projeto01
                         Console.Clear();
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        Console.WriteLine("Insira dados válidos\nAperte Enter para prosseguir");
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
                 }
                 opcaoUsuario = ObterOpcaoUsuario();
             }
@@ -41,58 +44,107 @@ namespace projeto01
             Console.WriteLine("Obrigado por utilizar nossos serviços.");
             Console.WriteLine();
             Console.ReadLine();
+            Console.Clear();
         }
         private static void InserirPontos(){
-            Console.Write("Digite o número da conta: ");
-            int indiceConta = int.Parse(Console.ReadLine());
+            try{
+                Console.Write("Digite o número da conta: ");
+                int indiceConta = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite a quantidade de pontos a serem depositados: ");
-            double valorDepositado = double.Parse(Console.ReadLine());
+                Console.Write("Digite a quantidade de pontos a serem depositados: ");
+                double valorDepositado = double.Parse(Console.ReadLine());
 
-            listContas[indiceConta].InserirPontos(valorDepositado);
+                listContas[indiceConta].InserirPontos(valorDepositado);
+            } catch {
+                Console.WriteLine("Insira dados válidos\nAperte Enter para proseguir");
+                Console.ReadLine();
+                Console.Clear();
+                return;
+            }
         }
         private static void UtilizarPontos(){
-            Console.Write("Digite o número da conta: ");
-            int indiceConta = int.Parse(Console.ReadLine());
+            try{
+                Console.Write("Digite o número da conta: ");
+                int indiceConta = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite o valor a ser sacado: ");
-            double valorSaque = double.Parse(Console.ReadLine());
+                Console.Write("Digite o valor a ser sacado: ");
+                double valorSaque = double.Parse(Console.ReadLine());
 
-            listContas[indiceConta].UtilizarPontos(valorSaque);
+                listContas[indiceConta].UtilizarPontos(valorSaque);
+            } catch {
+                Console.WriteLine("Insira dados válidos\nAperte Enter para proseguir");
+                Console.ReadLine();
+                Console.Clear();
+                return;
+            }
         }
         private static void TransferirPontos(){
-            Console.Write("Digite o número da conta de origem: ");
-            int indiceContaOrigem = int.Parse(Console.ReadLine());
-            
-            Console.Write("Digite o número da conta de destino: ");
-            int indiceContaDestino = int.Parse(Console.ReadLine());
-            
-            Console.Write("Digite o valor a ser transferido: ");
-            double valorATransferir = double.Parse(Console.ReadLine());
+            try{
+                Console.Write("Digite o número da conta de origem: ");
+                int indiceContaOrigem = int.Parse(Console.ReadLine());
 
-            listContas[indiceContaOrigem].TransferirPontos(valorATransferir, listContas[indiceContaDestino]);
+                Console.Write("Digite o número da conta de destino: ");
+                int indiceContaDestino = int.Parse(Console.ReadLine());
+
+                Console.Write("Digite o valor a ser transferido: ");
+                double valorATransferir = double.Parse(Console.ReadLine());
+
+                listContas[indiceContaOrigem].TransferirPontos(valorATransferir, listContas[indiceContaDestino]);
+            } catch {
+                Console.WriteLine("Insira dados válidos\nAperte Enter para proseguir");
+                Console.ReadLine();
+                Console.Clear();
+                return;
+            }
         }
         private static void InserirConta(){
-            Console.WriteLine("Inserir nova conta");
-            Console.Write("Digite 1 para Conta Física ou 2 para Juridica: ");
-            int entradaTipoConta = int.Parse(Console.ReadLine());
+            try{
+                Console.WriteLine("Inserir nova conta");
+                Console.Write("Digite 1 para Conta Física ou 2 para Juridica: ");
+                //int.TryParse(Console.ReadLine(), out int entradaTipoConta);
+                int entradaTipoConta = int.Parse(Console.ReadLine());
 
-            Console.Write("Digite o nome do cliente: ");
-            string entradaNome = Console.ReadLine();
-            
-            Console.Write("Digite o saldo de pontos inicial: ");
-            double entradaSaldo = double.Parse(Console.ReadLine());
-            
-            Console.Write("Digite o crédito: ");
-            double entradaCredito = double.Parse(Console.ReadLine());
+                Console.Write("Digite o nome do cliente: ");
+                string entradaNome = Console.ReadLine();
 
-            Conta novaConta = new Conta(tipoConta: (TipoConta)entradaTipoConta, saldo: entradaSaldo, credito: entradaCredito, nome: entradaNome);
-            listContas.Add(novaConta);
+                if(VerificarNome(entradaNome)){
+                    Console.Write("Cliente já se encontra na base de dados: ");
+                    Console.Write("Deseja tentar novamente? Digite 1 para sim e 0 para não: ");
+                    string valor = Console.ReadLine();
+                    switch(valor){
+                        case "1":
+                            InserirConta();
+                            return;
+                        case "0":
+                            ObterOpcaoUsuario();
+                            return;
+                        default:
+                            break;
+                    }
+                }
+
+                Console.Write("Digite o saldo de pontos inicial: ");
+                double entradaSaldo = double.Parse(Console.ReadLine());
+
+                Console.Write("Digite o crédito: ");
+                double entradaCredito = double.Parse(Console.ReadLine());
+
+                Conta novaConta = new Conta(tipoConta: (TipoConta)entradaTipoConta, saldo: entradaSaldo, credito: entradaCredito, nome: entradaNome);
+                listContas.Add(novaConta);
+            } catch {
+                Console.WriteLine("Insira dados válidos\nAperte Enter para proseguir");
+                Console.ReadLine();
+                Console.Clear();
+                return;
+            }
         }
         private static void ListarContas(){
             Console.WriteLine("Listar contas");
             if(listContas.Count == 0){
                 Console.WriteLine("Nenhuma conta cadastrada.");
+                Console.WriteLine("Aperte Enter para prosseguir");
+                Console.ReadLine();
+                Console.Clear();
                 return;
             }
 
@@ -101,6 +153,17 @@ namespace projeto01
                 Console.Write($"#{i} - ");
                 Console.WriteLine(conta.FormatarSaida());
             }
+        }
+
+        private static bool VerificarNome(string nome){
+            bool retorno = false;
+            for(int i = 0; i < listContas.Count; i++){
+                Conta conta = listContas[i];
+                if(conta.GetNome() == nome){
+                    retorno = true;
+                }
+            }
+            return retorno;
         }
         private static string ObterOpcaoUsuario(){
             Console.WriteLine();
@@ -114,7 +177,7 @@ namespace projeto01
             Console.WriteLine("C- Limpar Tela");
             Console.WriteLine("X- Sair");
             Console.WriteLine();
-            
+
             string opcaoUsuario = Console.ReadLine().ToUpper();
             Console.WriteLine();
             return opcaoUsuario;

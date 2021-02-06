@@ -16,6 +16,9 @@ namespace projeto01
             this.Nome = nome;
         }
 
+        public string GetNome(){
+            return this.Nome;
+        }
         public bool UtilizarPontos(double quantidade){
             if(this.Saldo - quantidade < (this.Credito *-1)){
                 Console.WriteLine("Saldo insuficiente!");
